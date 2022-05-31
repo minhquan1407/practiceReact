@@ -22,7 +22,7 @@ const UserProvider = ({ children }) => {
   const logout = (email, token) => {
     localStorage.removeItem("token", token);
     localStorage.removeItem("email", token);
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
     setUser((user) => ({
       email: "",
       auth: false,

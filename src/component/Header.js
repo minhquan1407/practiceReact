@@ -8,7 +8,7 @@ import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../Context/UserContext";
 
 const Header = (props) => {
-  const [hideHeader, setHideHeader] = useState("");
+  // const [hideHeader, setHideHeader] = useState("");
   const { logout, user } = useContext(UserContext);
   //cái logout này là mình con bên trong thằng UserContext, bên trong thằng context chỗ value nó đang truyền đi 1 cái obj
   //bên trong obj đấy nó gồm 3 thứ, thứ nhất là biến user và 2 function
