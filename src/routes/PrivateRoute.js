@@ -1,11 +1,8 @@
-import { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
-import TableUsers from "../component/TableUsers";
-import { UserContext } from "../Context/UserContext";
 import { Alert } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 const PrivateRoute = (props) => {
-  const { user } = useContext(UserContext);
+  const user = useSelector((state) => state.user.account);
 
   if (user && !user.auth) {
     return (

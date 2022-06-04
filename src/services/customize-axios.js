@@ -13,8 +13,11 @@ instance.interceptors.response.use(
     // nếu nó kh rỗng thì lấy nó, còn kh thì lấy cái reponse.status
   },
   function (error) {
+    // console.log("check error:", error);
     let res = {};
+    // search: handle error axios
     if (error.response) {
+      //đây dùng if là bởi vì error mà kh trả về phản hồi mà .response thì nó sẽ bị undefened, mà undefened mà .data thì ngũm lun ứng dụng
       // search: axios-handle-errors
       // Request made and server responded
       res.data = error.response.data;

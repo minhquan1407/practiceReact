@@ -5,31 +5,31 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../Context/UserContext";
+import { useDispatch, useSelector } from "react-redux";
+import { handleLogoutRedux } from "../redux/actions/userAction";
 
 const Header = (props) => {
-  // const [hideHeader, setHideHeader] = useState("");
-  const { logout, user } = useContext(UserContext);
-  //cái logout này là mình con bên trong thằng UserContext, bên trong thằng context chỗ value nó đang truyền đi 1 cái obj
-  //bên trong obj đấy nó gồm 3 thứ, thứ nhất là biến user và 2 function
-  // chúng ta lấy func logout là mún ám thị rằng đang dùng 1 biến obj và muốn lấy ra cái func bên trong cái biến obj đấy (ở đây là func logout)
-  // chúng ta gọi thằng đến thằng useContext, và tại sao UserContext nó có thể export ra đc
-  // bởi vì  bên component UserContext mình truyền nó như 1 cái props
-  // Đây là t/d của useContext nó giúp chúng ta chia sẻ data bên trong ứng dụng React, mà kh phải tốn công truyền từ thằng cha xún con
-  // Chúng ta đang tạo những cái biến global toàn cục
-
-  // nếu 1 biến trong useContext thay đổi thì giao diện ta sẽ bị thay đổi theo
   const navigate = useNavigate();
+
+  const user = useSelector((state) => state.user.account);
+
+  const dispatch = useDispatch();
   const handleLogout = () => {
-    logout();
-    navigate("/");
-    toast.success("Log out success");
+    dispatch(handleLogoutRedux());
+
+    // navigate("/");
+    // toast.success("Log out success");
   };
-  // useEffect(() => {
-  //   if (window.location.pathname === "/login") {
-  //     setHideHeader(true);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (user && user.auth === false && window.location.pathname !== "/login") {
+      navigate("/");
+      toast.success("Log out success!");
+    }
+  }, [user]);
+  //bên file userReducer set thằng auth: null bở vì
+  //Khi mà mình logout thì nó sẽ bắn ra 1 cái toast success, Vì cái thằng user mới vào nó sẽ chạy lần đầu
+  //Vì hén là 1 cái depedentce(thêm thành phần phụ thuc nó sẽ check cái biến này)
+  // mà lần đầu thì nó lun bằng false nên hén chính là lí do hén có cái toast đó
   return (
     <>
       <Navbar bg="light" expand="lg">

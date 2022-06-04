@@ -1,23 +1,19 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Container } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "./App.scss";
 import Header from "./component/Header";
-import { UserContext } from "./Context/UserContext";
+import { handleRefresh } from "./redux/actions/userAction";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  const { user, loginContext } = useContext(UserContext);
-  console.log("user: ", user);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      loginContext(
-        localStorage.getItem("email"),
-        localStorage.getItem("token")
-      );
-    } // check nếu ở dưới localStorage có thằng token và thằng email thì chúng ta sẽ gọi ngược lại thằng
-    //login này, khi mà gọi ngược lại thằng login này nó sẽ chạy vào file UserContext có hàm đó
+      dispatch(handleRefresh());
+    }
+    //mỗi lần Refresh F5 lại thì nó sẽ add cái data account lại cho ta
   }, []);
 
   return (

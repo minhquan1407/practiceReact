@@ -25,7 +25,7 @@ const AppRoutes = () => {
           //cho nên dù mình ghi cái j trong đấy nó cũng phải cần trả ra 1 cái component
           //Thành ra mún lấy component TableUsers nên đáy là lí do bên PrivateRoute sử dụng keyword {props.children}
         />
-        <Route path="*" element={<NotFound />} />
+        {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
     </>
   );

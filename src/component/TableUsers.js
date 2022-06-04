@@ -33,21 +33,19 @@ const TableUsers = (props) => {
 
   useEffect(() => {
     //call apis
-    getUsers(1);
+    getUsers();
   }, []);
 
   const getUsers = async (page) => {
     let res = await fetchAllUser(page); //page ở đây nghĩa là lấy số lượng phần tử tại trang đầu tiên
     if (res && res.data) {
       console.log("check data: ", res);
-      setTotalUsers(res.total);
       setListUsers(res.data);
+      setTotalUsers(res.total);
       setTotalPages(res.total_pages);
     }
   };
   const handlePageClick = (event) => {
-    // event này làm theo trên thư viên
-    // console.log("event lib: ", event)
     getUsers(+event.selected + 1); // getUsers click vào trang nào lấy dữ liệu trang đấy
     // dấu cộng ở đây là convert kiểu string sang number(khi kb kiểu dữ liệu là 1 trong 2  cái kia)
   };
@@ -59,18 +57,21 @@ const TableUsers = (props) => {
   };
   const handleUpdateTable = (user) => {
     setListUsers([user, ...listUsers]);
-    // console.log("check user: ", user)
+    // console.log("check user: ", user);
   };
 
   const handleEditUser = (user) => {
-    setDataUserEdit(user);
+    // truyền user mà mún edit
     setIsShowModalEdit(true);
+    setDataUserEdit(user);
+    // console.log(user);
   };
   const handleEditUserFromModal = (user) => {
     let cloneListUser = _.cloneDeep(listUsers); // nó sẽ trỏ tới hai địa chỉ bộ nhớ khác nhau
     //nên cái mảng cũ vẫn giữ nguyên first_name, mảng mới đc clone ra thì đã thay đổi
     let index = listUsers.findIndex((item) => item.id === user.id);
     cloneListUser[index].first_name = user.first_name;
+    //lấy ra phần tử mún cập nhập và . đến thằng first_name
     setListUsers(cloneListUser);
     console.log(listUsers, cloneListUser);
   };
@@ -88,8 +89,8 @@ const TableUsers = (props) => {
   };
 
   const handleSort = (sortBy, sortField) => {
-    // js array sort desc
-    setSortBy(sortBy);
+    // js array sort by property
+    setSortBy(sortBy); // mặc định sort theo trường id
     setSortField(sortField);
 
     let cloneListUser = _.cloneDeep(listUsers);
@@ -112,7 +113,7 @@ const TableUsers = (props) => {
       cloneListUser = cloneListUser.filter((item) => item.email.includes(term)); //String.prototype.includes()
       setListUsers(cloneListUser);
     } else {
-      getUsers(1); // khi mà để rỗng thì fetch lại danh sách user
+      getUsers(); // khi mà để rỗng thì fetch lại danh sách user
       // fetch lại bởi vì nếu nhập mỗi chuỗi nào đó mà kh có trong danh sách or có thì sau khi xóa đoạn text đó
       // khỏi input nó phải trả lại cái danh sách cho ta, nêu kh fetch lại thì nó sẽ kh trả ra lại d/s
     }
@@ -141,6 +142,7 @@ const TableUsers = (props) => {
   const handleImportCSV = (event) => {
     if (event.target && event.target.files && event.target.files[0]) {
       let file = event.target.files[0]; // search: html get input file react
+      // chúng ta upload 1 file thì phải lấy thằng đầu tiên đó là quy định của thèn html thui
       console.log("check file upload", file);
 
       if (file.type !== "text/csv") {
@@ -148,6 +150,7 @@ const TableUsers = (props) => {
         return;
       }
 
+      // Bước Convert
       // Parse local CSV file
       Papa.parse(file, {
         // header: true, //ờ ma zing, nếu truyền 1 cái props là header thì nó sẽ tự lấy cái Header của chúng ta là key
@@ -156,9 +159,10 @@ const TableUsers = (props) => {
           let rawCSV = results.data;
           if (rawCSV.length > 0) {
             if (rawCSV[0] && rawCSV[0].length === 3) {
-              //rawCSV lấy phần tử đầu tiên, nếu lấy rawCSV kh thì tổng tất cả các raw mà đọc đc
+              //rawCSV[0] lấy phần tử đầu tiên, nếu lấy rawCSV kh thì tổng tất cả các raw mà đọc đc
               //length = 3 là để ép import cái định dạng file cho nó đúng, chứ triền miên sai hết định dạng thì kh đọc đc data
               if (
+                // check cái trường cho đúng với định dạng file, email, first_name last_name
                 rawCSV[0][0] !== "email" || // mảng 2 chìu vào đc data rồi lấy thằng header đầu tiên là email
                 rawCSV[0][1] !== "first_name" ||
                 rawCSV[0][2] !== "last_name"
@@ -169,6 +173,7 @@ const TableUsers = (props) => {
 
                 rawCSV.map((item, index) => {
                   if (index > 0 && item.length === 3) {
+                    //index > 0 là vì,index = 0 chính là cái dòng đầu tiên, mà header thì nó đâu lấy ra dữ liệu
                     // nếu dữ liệu sai kh có thì còn biết
                     let obj = {};
                     obj.email = item[0];
